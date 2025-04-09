@@ -7,14 +7,10 @@ import {
 import {GqlExecutionContext} from "@nestjs/graphql";
 import {Observable} from "rxjs";
 
-import {TokenService} from "../../../helpers/token";
-
 @Injectable()
 export class GqlAuthGuard implements CanActivate {
-  constructor(private readonly tokenService: TokenService) {}
-  async canActivate(
-    context: ExecutionContext,
-  ): Promise<boolean> {
+  constructor() {}
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const ctx = GqlExecutionContext.create(context);
     const req = ctx.getContext().req;
 
@@ -26,8 +22,7 @@ export class GqlAuthGuard implements CanActivate {
     }
 
     const token = authHeader.split(" ")[1]; // Get the bearer token
-    const decode = await this.tokenService.verifyToken(token);
-    console.log("DECODE AUTH GUARD: ", decode)
+    console.log("DECODE AUTH GUARD: ", decode);
     req.user = decode; //
     return true;
   }

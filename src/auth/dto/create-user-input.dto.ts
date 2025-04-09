@@ -19,5 +19,4 @@ export class CreateUserInputDto {
 
   @Field({nullable: true})
   biometricKey?: string;
-
 }
