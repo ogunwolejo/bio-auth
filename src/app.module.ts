@@ -9,9 +9,9 @@ import {AppController} from "./app.controller";
 import {AppService} from "./app.service";
 import {UsersModule} from "./users/users.module";
 import {PrismaService} from "./prisma/prisma.service";
-import {BiometricModule} from "./biometric/biometric.module";
 import {GraphQLFormattedError} from "graphql/error";
-import { AuthModule } from './auth/auth.module';
+import {AuthModule} from "./auth/auth.module";
+import {PasskeyModule} from "./passkey/passkey.module";
 
 @Module({
   imports: [
@@ -33,8 +33,8 @@ import { AuthModule } from './auth/auth.module';
       cache: true,
     }),
     UsersModule,
-    BiometricModule,
     AuthModule,
+    PasskeyModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

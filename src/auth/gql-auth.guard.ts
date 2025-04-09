@@ -1,29 +1,35 @@
 import {
+  Injectable,
   CanActivate,
   ExecutionContext,
-  Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
-import {GqlExecutionContext} from "@nestjs/graphql";
-import {Observable} from "rxjs";
+import {JwtService} from "@nestjs/jwt";
 
 @Injectable()
-export class GqlAuthGuard implements CanActivate {
-  constructor() {}
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const ctx = GqlExecutionContext.create(context);
-    const req = ctx.getContext().req;
+export class JwtAuthGuard implements CanActivate {
+  constructor(private readonly jwtService: JwtService) {}
 
-    const authHeader = req.headers["authorization"];
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      throw new UnauthorizedException(
-        "Missing or invalid Authorization header",
-      );
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest();
+    const authHeader = request.headers.authorization;
+
+    if (!authHeader) {
+      throw new UnauthorizedException("Authorization header is missing");
     }
 
-    const token = authHeader.split(" ")[1]; // Get the bearer token
-    console.log("DECODE AUTH GUARD: ", decode);
-    req.user = decode; //
-    return true;
+    const token = authHeader.split(" ")[1]; // Extract the token from the Bearer string
+
+    if (!token) {
+      throw new UnauthorizedException("Token is missing");
+    }
+
+    try {
+      const payload = await this.jwtService.verifyAsync(token); // Verify the token
+      request.user = payload; // Attach the user payload to the request object
+      return true; // Allow access
+    } catch (error) {
+      throw new UnauthorizedException("Invalid token");
+    }
   }
 }

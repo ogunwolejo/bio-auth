@@ -1,5 +1,4 @@
 import {ObjectType, Field, ID} from "@nestjs/graphql";
-import {BiometricModel} from "../biometric/biometric.model";
 
 @ObjectType()
 export class UsersModel {
@@ -62,6 +61,6 @@ export class IUsers {
   @Field()
   updatedAt: Date;
 
-  @Field(type => BiometricModel, {nullable: true})
-  biometricKeys?: BiometricModel;
+  @Field(type => String, {nullable: true})
+  passkeyId?: string;
 }

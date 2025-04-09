@@ -36,7 +36,7 @@ type Mutation {
 
 input LoginInputDto {
   email: String!
-  password: String!
+  pass: String!
 }
 
 input CreateUserInputDto {

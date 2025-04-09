@@ -11,5 +11,5 @@ export class LoginInputDto {
   @Field()
   @IsString()
   @IsNotEmpty()
-  password: string;
+  pass: string;
 }
