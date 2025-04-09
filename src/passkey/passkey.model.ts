@@ -6,22 +6,17 @@ export class PasskeyModel {
   @Field(type => ID)
   id: number;
 
-  publicKey: String; // Raw public key bytes
+  @Field()
+  userIdentifier: string;
 
   @Field()
-  webauthnUserID: string;
+  credentialPublicKey: Uint8Array<ArrayBufferLike>;
+
+  @Field()
+  credentialID: string;
 
   @Field(type => Int)
   counter: number;
-
-  @Field()
-  deviceType: string;
-
-  @Field()
-  backedUp: boolean; // Indicates if the Passkey is backed up
-
-  @Field()
-  transports?: string; // Optional transports, can be a CSV string
 
   @Field(type => Int)
   userId: number; // Foreign key to the User
@@ -29,17 +24,22 @@ export class PasskeyModel {
   // Relation
   @Field(type => UsersModel, {nullable: true})
   user?: UsersModel; // Optional relation to the User entity
-}
 
+  @Field()
+  createdAt: Date;
+
+  @Field()
+  updatedAt: Date;
+}
 
 @ObjectType()
 export class LoginWithPasskeyResult {
   @Field()
   success: boolean;
 
-  @Field({ nullable: true })
+  @Field({nullable: true})
   message?: string;
 
-  @Field({ nullable: true })
+  @Field({nullable: true})
   token?: string; // Assuming you return a JWT
 }

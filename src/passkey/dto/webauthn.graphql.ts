@@ -7,7 +7,7 @@ export class WebAuthnInput {
   identifier: string;
 
   @Field(() => String, {nullable: true})
-  response?: string; // JSON string from browser
+  response: string; // JSON string from browser
 }
 
 @ObjectType()

@@ -3,6 +3,7 @@ import {UsersService} from "./users.service";
 import {UsersResolver} from "./users.resolver";
 import {PrismaService} from "../prisma/prisma.service";
 import {BcryptPasswordService} from "../helpers/bcrypt.service";
+import {JwtService} from "@nestjs/jwt";
 
 @Module({
   providers: [
@@ -10,6 +11,7 @@ import {BcryptPasswordService} from "../helpers/bcrypt.service";
     UsersResolver,
     PrismaService,
     BcryptPasswordService,
+    JwtService,
   ],
   exports: [UsersService],
 })

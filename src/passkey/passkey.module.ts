@@ -1,8 +1,9 @@
 import {Module} from "@nestjs/common";
 import {PasskeyService} from "./passkey.service";
-import {PasskeyResolver} from "./passkey.resolver";
+import {PrismaService} from "../prisma/prisma.service";
 
 @Module({
-  providers: [PasskeyService, PasskeyResolver],
+  providers: [PasskeyService, PrismaService],
+  exports: [PasskeyService],
 })
 export class PasskeyModule {}

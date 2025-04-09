@@ -17,12 +17,18 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type RegisteredUser {
-  id: ID!
-  email: String!
-  name: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
+type LoginWithPasskeyResult {
+  success: Boolean!
+  message: String
+  token: String
+}
+
+type PublicKeyCredentialCreationOptionsOutput {
+  options: String!
+}
+
+type WebAuthnVerificationResult {
+  verified: Boolean!
 }
 
 type Query {
@@ -31,7 +37,12 @@ type Query {
 
 type Mutation {
   login(loginInput: LoginInputDto!): UsersModel
-  registerUser(input: CreateUserInputDto!): RegisteredUser!
+  registerUser(input: CreateUserInputDto!): String!
+  loginWithPasskey(input: LoginWithPasskeyInput!): LoginWithPasskeyResult!
+  generateRegistrationOptions(input: WebAuthnInput!): PublicKeyCredentialCreationOptionsOutput!
+  verifyRegistration(input: WebAuthnInput!): WebAuthnVerificationResult!
+  generateAuthenticationOptions(input: WebAuthnInput!): PublicKeyCredentialCreationOptionsOutput!
+  verifyAuthentication(input: WebAuthnInput!): WebAuthnVerificationResult!
 }
 
 input LoginInputDto {
@@ -43,5 +54,15 @@ input CreateUserInputDto {
   email: String!
   password: String!
   name: String
-  biometricKey: String
+  passkeyId: String
+}
+
+input LoginWithPasskeyInput {
+  email: String!
+  passKey: String!
+}
+
+input WebAuthnInput {
+  identifier: String!
+  response: String
 }
