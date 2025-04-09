@@ -5,10 +5,12 @@ import * as process from "process";
 import {JwtModule} from "@nestjs/jwt";
 import {BcryptPasswordService} from "../helpers/bcrypt.service";
 import {AuthResolver} from "./auth.resolver";
+import {PasskeyModule} from "../passkey/passkey.module";
 
 @Module({
   imports: [
     UsersModule,
+    PasskeyModule,
     JwtModule.register({
       secret: process.env.SECRET,
       signOptions: {expiresIn: "60s"},

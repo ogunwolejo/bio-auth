@@ -5,8 +5,8 @@ import {GraphQLError} from "graphql/error";
 import {UsersModel} from "../users/users.model";
 import {BcryptPasswordService} from "../helpers/bcrypt.service";
 import {LoginInputDto} from "./dto/login-input.dto";
-import { PasskeyService } from '../passkey/passkey.service';
-import { CreateUserInputDto } from './dto/create-user-input.dto';
+import {PasskeyService} from "../passkey/passkey.service";
+import {CreateUserInputDto} from "./dto/create-user-input.dto";
 
 @Injectable()
 export class AuthService {
@@ -70,14 +70,20 @@ export class AuthService {
     };
   }
 
-  async registerUserWithPasskey(input: CreateUserInputDto): Promise<string> {
+  async registerUserWithPasskey(input: CreateUserInputDto): Promise<number> {
     try {
       const {email, passkeyId} = input;
-      const { verified, credential } = await this.passkeyService.verifyRegistration(email, passkeyId);
+
+      if (!passkeyId || !passkeyId.length) {
+        throw new Error("passkey is required");
+      }
+
+      const {verified, credential} =
+        await this.passkeyService.verifyRegistration(email, passkeyId);
 
       // If registration was not verify we throw an error
       if (!verified || !credential) {
-        throw new Error('Passkey verification failed');
+        throw new Error("Passkey verification failed");
       }
 
       // create new user
@@ -87,24 +93,20 @@ export class AuthService {
       await this.passkeyService.createPasskey(
         newUser.email,
         newUser.id,
-        credential
+        credential,
       );
 
       return newUser.id;
-
     } catch (e) {
       throw new GraphQLError(e.message, {
         extensions: {
           code: "USER_NOT_FOUND",
           http: {
             status: 404,
-            headers: new Map([
-              ["X-Error-Message", `${e.message}`],
-            ]),
+            headers: new Map([["X-Error-Message", `${e.message}`]]),
           },
         },
       });
     }
   }
-
 }

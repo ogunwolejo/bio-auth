@@ -1,21 +1,23 @@
-import { Injectable } from "@nestjs/common";
-import { PrismaService } from "../prisma/prisma.service";
+import {Injectable} from "@nestjs/common";
+import {PrismaService} from "../prisma/prisma.service";
 import {
   generateRegistrationOptions,
   generateAuthenticationOptions,
 } from "@simplewebauthn/server";
-import { PasskeyModel } from "./passkey.model";
-import { GraphQLError } from "graphql/error";
+import {PasskeyModel} from "./passkey.model";
+import {GraphQLError} from "graphql/error";
 
+// Default webauthn configuration
 const webauthnConfig = {
   rpName: "Test App",
   rpID: "localhost",
   origin: "http://localhost:3000",
 };
 
+// mock the credential data
 type MockCredential = {
   credentialID: string;
-  credentialPublicKey:  Uint8Array<ArrayBuffer>;
+  credentialPublicKey: Uint8Array<ArrayBuffer>;
   counter: number;
 };
 
@@ -30,7 +32,7 @@ export class PasskeyService {
     const options = await generateRegistrationOptions({
       rpName: webauthnConfig.rpName,
       rpID: webauthnConfig.rpID,
-      userID: identifier,
+      //userID: identifier,
       userName: identifier,
       timeout: 60000,
       attestationType: "none",
@@ -38,14 +40,17 @@ export class PasskeyService {
         residentKey: "preferred",
         userVerification: "preferred",
       },
-      excludeCredentials: this.userCreds.get(identifier) || [],
+      //excludeCredentials: this.userCreds.get(identifier) || [],
     });
 
     this.challenges.set(identifier, options.challenge);
     return options;
   }
 
-  async verifyRegistration(identifier: string, attestationResponse: string) {
+  async verifyRegistration(
+    identifier: string,
+    attestationResponse: string,
+  ): Promise<{verified: boolean; credential: MockCredential}> {
     const fakeCred: MockCredential = {
       credentialID: attestationResponse, //|| "mock-cred-id",
       credentialPublicKey: new Uint8Array([1, 2, 3]),
@@ -56,7 +61,7 @@ export class PasskeyService {
     creds.push(fakeCred);
     this.userCreds.set(identifier, creds);
 
-    return { verified: true, credential: fakeCred };
+    return {verified: true, credential: fakeCred};
   }
 
   async generateAuthenticationOptions(identifier: string) {
@@ -65,7 +70,7 @@ export class PasskeyService {
     const options = await generateAuthenticationOptions({
       timeout: 60000,
       rpID: webauthnConfig.rpID,
-      allowCredentials: creds.map((cred) => ({
+      allowCredentials: creds.map(cred => ({
         id: cred.credentialID,
         type: "public-key",
       })),
@@ -79,23 +84,20 @@ export class PasskeyService {
   async verifyAuthentication(identifier: string, assertionResponse: string) {
     const creds = this.userCreds.get(identifier) || [];
 
-    const dbCred = creds.find(
-      (c) => c.credentialID === assertionResponse
-    );
+    const dbCred = creds.find(c => c.credentialID === assertionResponse);
 
-    if (!dbCred) return { verified: false };
+    if (!dbCred) return {verified: false};
 
     // Just bump counter and call it "verified"
     dbCred.counter += 1;
 
-    return { verified: true };
+    return {verified: true};
   }
-
 
   async createPasskey(
     email: string,
     userId: number,
-    credential: MockCredential
+    credential: MockCredential,
   ): Promise<PasskeyModel> {
     try {
       const key = await this.prisma.passKey.create({
@@ -104,7 +106,7 @@ export class PasskeyService {
           credentialID: credential.credentialID,
           credentialPublicKey: credential.credentialPublicKey,
           counter: credential.counter,
-          user: { connect: { id: userId } },
+          user: {connect: {id: userId}},
         },
       });
 
