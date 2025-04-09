@@ -1,0 +1,47 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UsersModel {
+  id: ID!
+  email: String!
+  name: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  AccessToken: String!
+  RefreshToken: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type RegisteredUser {
+  id: ID!
+  email: String!
+  name: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Query {
+  fetchRoles: String!
+}
+
+type Mutation {
+  login(loginInput: LoginInputDto!): UsersModel
+  registerUser(input: CreateUserInputDto!): RegisteredUser!
+}
+
+input LoginInputDto {
+  email: String!
+  password: String!
+}
+
+input CreateUserInputDto {
+  email: String!
+  password: String!
+  name: String
+  biometricKey: String
+}
