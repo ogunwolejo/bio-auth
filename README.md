@@ -49,8 +49,8 @@ SECRET=hjkhkjhkj1234 # create your secrets
 # 4. Build application via docker
 docker-compose up --build
 
-# 5. Start database
-docker-compose up -d
+# 5. Start containers
+docker-compose up 
 ```
 
 Application will be available at:
@@ -136,6 +136,10 @@ Biometric Authentication Flow
 ```bash
   $ docker-compose down
 ```
+
+
+## Postman Docs
+https://www.postman.com/warped-escape-365112/workspace/bio-auth-1/collection/67f7211f7f673575c14edb06?action=share&creator=11173198
 
 ## Testing
 ```bash

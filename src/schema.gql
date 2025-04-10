@@ -23,14 +23,6 @@ type LoginWithPasskeyResult {
   token: String
 }
 
-type PublicKeyCredentialCreationOptionsOutput {
-  options: String!
-}
-
-type WebAuthnVerificationResult {
-  verified: Boolean!
-}
-
 type Query {
   fetchRoles: String!
 }
@@ -39,10 +31,6 @@ type Mutation {
   login(loginInput: LoginInputDto!): UsersModel
   registerUser(input: CreateUserInputDto!): String!
   loginWithPasskey(input: LoginWithPasskeyInput!): LoginWithPasskeyResult!
-  generateRegistrationOptions(input: WebAuthnInput!): PublicKeyCredentialCreationOptionsOutput!
-  verifyRegistration(input: WebAuthnInput!): WebAuthnVerificationResult!
-  generateAuthenticationOptions(input: WebAuthnInput!): PublicKeyCredentialCreationOptionsOutput!
-  verifyAuthentication(input: WebAuthnInput!): WebAuthnVerificationResult!
 }
 
 input LoginInputDto {
@@ -60,9 +48,4 @@ input CreateUserInputDto {
 input LoginWithPasskeyInput {
   email: String!
   passKey: String!
-}
-
-input WebAuthnInput {
-  identifier: String!
-  response: String
 }

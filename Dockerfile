@@ -29,5 +29,4 @@ RUN npm install --production
 EXPOSE 3000
 
 # Command to run the application
-
-CMD ["node", "dist/main.js"]
+CMD ["npm", "run", "start:prod"]
