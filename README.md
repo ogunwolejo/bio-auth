@@ -43,7 +43,8 @@ npm install
 
 # 3. Setup environment
 cp .env.example .env
-# Edit .env with your values
+DATABASE_URL="postgresql://postgres:postgres@db:5432/mydb" # must correspond with your docker environments
+SECRET=hjkhkjhkj1234 # create your secrets
 
 # 4. Build application via docker
 docker-compose up --build
