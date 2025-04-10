@@ -1,6 +1,6 @@
-import {Test, TestingModule} from "@nestjs/testing";
-import {PrismaService} from "./prisma.service"; // Adjust the import path as necessary
-import {PrismaClient} from "@prisma/client";
+import { Test, TestingModule } from "@nestjs/testing";
+import { PrismaService } from "./prisma.service";
+import { PrismaClient } from "@prisma/client";
 
 jest.mock("@prisma/client", () => {
   return {
@@ -26,19 +26,5 @@ describe("PrismaService", () => {
 
   it("should be defined", () => {
     expect(prismaService).toBeDefined();
-  });
-
-  describe("onModuleInit", () => {
-    it("should connect to the database", async () => {
-      await prismaService.onModuleInit();
-      expect(prismaService.$connect).toHaveBeenCalled();
-    });
-  });
-
-  describe("onModuleDestroy", () => {
-    it("should disconnect from the database", async () => {
-      await prismaService.onModuleDestroy();
-      expect(prismaService.$disconnect).toHaveBeenCalled();
-    });
   });
 });

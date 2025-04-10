@@ -28,24 +28,24 @@ export class PasskeyService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async generateRegistrationOptions(identifier: string) {
-    const options = await generateRegistrationOptions({
-      rpName: webauthnConfig.rpName,
-      rpID: webauthnConfig.rpID,
-      //userID: identifier,
-      userName: identifier,
-      timeout: 60000,
-      attestationType: "none",
-      authenticatorSelection: {
-        residentKey: "preferred",
-        userVerification: "preferred",
-      },
-      //excludeCredentials: this.userCreds.get(identifier) || [],
-    });
-
-    this.challenges.set(identifier, options.challenge);
-    return options;
-  }
+  // async generateRegistrationOptions(identifier: string) {
+  //   const options = await generateRegistrationOptions({
+  //     rpName: webauthnConfig.rpName,
+  //     rpID: webauthnConfig.rpID,
+  //     //userID: identifier,
+  //     userName: identifier,
+  //     timeout: 60000,
+  //     attestationType: "none",
+  //     authenticatorSelection: {
+  //       residentKey: "preferred",
+  //       userVerification: "preferred",
+  //     },
+  //     //excludeCredentials: this.userCreds.get(identifier) || [],
+  //   });
+  //
+  //   this.challenges.set(identifier, options.challenge);
+  //   return options;
+  // }
 
   async verifyRegistration(
     identifier: string,
@@ -64,22 +64,22 @@ export class PasskeyService {
     return {verified: true, credential: fakeCred};
   }
 
-  async generateAuthenticationOptions(identifier: string) {
-    const creds = this.userCreds.get(identifier) || [];
-
-    const options = await generateAuthenticationOptions({
-      timeout: 60000,
-      rpID: webauthnConfig.rpID,
-      allowCredentials: creds.map(cred => ({
-        id: cred.credentialID,
-        type: "public-key",
-      })),
-      userVerification: "preferred",
-    });
-
-    this.challenges.set(identifier, options.challenge);
-    return options;
-  }
+  // async generateAuthenticationOptions(identifier: string) {
+  //   const creds = this.userCreds.get(identifier) || [];
+  //
+  //   const options = await generateAuthenticationOptions({
+  //     timeout: 60000,
+  //     rpID: webauthnConfig.rpID,
+  //     allowCredentials: creds.map(cred => ({
+  //       id: cred.credentialID,
+  //       type: "public-key",
+  //     })),
+  //     userVerification: "preferred",
+  //   });
+  //
+  //   this.challenges.set(identifier, options.challenge);
+  //   return options;
+  // }
 
   async verifyAuthentication(identifier: string, assertionResponse: string) {
     const creds = this.userCreds.get(identifier) || [];

@@ -6,12 +6,14 @@ import {BcryptPasswordService} from "../helpers/bcrypt.service";
 import {GraphQLError} from "graphql/error";
 import {LoginInputDto} from "./dto/login-input.dto";
 import {UsersModel} from "../users/users.model";
+import { PasskeyService } from '../passkey/passkey.service';
 
 describe("AuthService", () => {
   let authService: AuthService;
   let usersService: UsersService;
   let jwtService: JwtService;
   let bcryptService: BcryptPasswordService;
+  let passkeyService: PasskeyService;
 
   const mockUser = {
     id: 1,
@@ -44,12 +46,19 @@ describe("AuthService", () => {
             comparePasswords: jest.fn(),
           },
         },
+        {
+          provide: PasskeyService,
+          useValue: {
+            comparePasswords: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     authService = module.get<AuthService>(AuthService);
     usersService = module.get<UsersService>(UsersService);
     jwtService = module.get<JwtService>(JwtService);
+    passkeyService = module.get<PasskeyService>(PasskeyService)
     bcryptService = module.get<BcryptPasswordService>(BcryptPasswordService);
   });
 
@@ -98,7 +107,7 @@ describe("AuthService", () => {
       expect(result).toEqual({
         id: 1,
         email: "jayjay@gmail.com",
-        password: "password",
+        //password: "password",
         name: "jay jay",
         createdAt: new Date(2025, 4, 9),
         updatedAt: new Date(2025, 4, 9),

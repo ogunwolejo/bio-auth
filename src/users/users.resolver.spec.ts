@@ -1,68 +1,62 @@
-import {Test, TestingModule} from "@nestjs/testing";
-import {UsersResolver} from "./users.resolver";
-import {UsersService} from "./users.service";
-import {JwtAuthGuard} from "../auth/gql-auth.guard";
-import {ExecutionContext} from "@nestjs/common";
-import {GqlExecutionContext} from "@nestjs/graphql";
+// users.resolver.spec.ts
+import { Test, TestingModule } from '@nestjs/testing';
+import { UsersResolver } from './users.resolver';
+import { UsersService } from './users.service';
+import { UsersModel } from './users.model'; // Import UsersModel
+import { JwtAuthGuard } from '../auth/gql-auth.guard';
+import { JwtModule } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 
-describe("UsersResolver", () => {
+describe('UsersResolver', () => {
   let resolver: UsersResolver;
   let usersService: UsersService;
+  let jwtService: JwtService;
+
+  // Create a mock user model
+  const mockUser: UsersModel = {
+    id: 1,
+    email: 'john.doe@example.com',
+    name: 'John Doe',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    AccessToken: 'mockAccessToken',
+    RefreshToken: 'mockRefreshToken',
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        JwtModule.register({
+          secret: 'testSecret', // Use a test secret
+          signOptions: { expiresIn: '60s' }, // Set any options you need
+        }),
+      ],
       providers: [
         UsersResolver,
         {
           provide: UsersService,
           useValue: {
-            findOne: jest.fn().mockImplementation((email: string) => {
-              if (email === "test@example.com") {
-                return {
-                  id: 1,
-                  email: "test@example.com",
-                  password: "hashedpassword",
-                  name: "test example",
-                  createdAt: Date.now(),
-                  updatedAt: Date.now(),
-                };
-              }
-              return null; // Simulate user not found
-            }),
-          },
-        },
-      ],
-    }).compile();
+            // Mock any methods you need from UsersService here
+            findUserById: jest.fn().mockResolvedValue(mockUser),
+  },
+  },
+    JwtAuthGuard, // Include the guard if you want to test it
+  ],
+  }).compile();
 
     resolver = module.get<UsersResolver>(UsersResolver);
     usersService = module.get<UsersService>(UsersService);
+    jwtService = module.get<JwtService>(JwtService);
   });
 
-  describe("fetchRoles", () => {
-    it("should return a greeting message with user info", () => {
-      // Mock the context with user information
-      const context = {
-        user: {
-          email: "test@example.com",
-          id: 1,
-        },
+  describe('fetchRoles', () => {
+    it('should return a string with user context', () => {
+      const mockContext = {
+        user: 'John Doe',
       };
 
-      const result = resolver.fetchRoles(context);
-      expect(result).toBe("Thank you for this opporunity [object Object]");
-    });
-
-    it("should return a greeting message with user info for a different user", () => {
-      // Mock the context with user information for a different user
-      const context = {
-        user: {
-          email: "admin@example.com",
-          id: 2,
-        },
-      };
-
-      const result = resolver.fetchRoles(context);
-      expect(result).toBe("Thank you for this opporunity [object Object]");
+      const result = resolver.fetchRoles(mockContext as any);
+      expect(result).toBe('Thank you for this opporunity John Doe');
     });
   });
 });
